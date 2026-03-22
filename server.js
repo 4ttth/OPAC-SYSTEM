@@ -509,8 +509,8 @@ app.get("/audit-log/download", async (req, res) => {
 
 app.use(express.static(join(__dirname, "public")));
 
-// Local dev only — Vercel uses the default export
-if (process.env.NODE_ENV !== "production") {
+// Local dev — Vercel sets process.env.VERCEL automatically
+if (!process.env.VERCEL) {
   app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
 }
 

@@ -1,3 +1,4 @@
 node_modules/
 soc_library.db
+local.db
 .env
