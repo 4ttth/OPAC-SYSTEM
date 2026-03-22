@@ -1,0 +1,779 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* =====================================================
+   TYPE SCALE
+   --font-size-xs:   11px  — labels, badges, table headers
+   --font-size-sm:   12px  — secondary text, captions
+   --font-size-base: 13px  — body text, table rows
+   --font-size-md:   14px  — inputs, buttons
+   --font-size-lg:   15px  — section headings (box h2)
+   --font-size-xl:   17px  — topbar brand name
+   --font-size-2xl:  30px  — login page heading
+   ===================================================== */
+
+/* =====================================================
+   LOGIN PAGE (index.html)
+   ===================================================== */
+
+body.login-page {
+    font-family: 'Inter', sans-serif;
+    background: #3B1A0A;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.login-card {
+    background: #fff;
+    border-radius: 22px;
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 620px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+}
+
+.login-left {
+    width: 45%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    margin: 14px;
+    flex-shrink: 0;
+    background: #1a1a1a;
+}
+
+.login-panel-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.login-left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%);
+    pointer-events: none;
+}
+
+.login-right {
+    flex: 1;
+    padding: 60px 58px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-logo {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 24px;
+}
+
+/* Login heading — 2xl */
+.login-right h2 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 8px 0;
+}
+
+/* Login subtitle — sm */
+.login-subtitle {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 28px 0;
+}
+
+.login-divider {
+    border: none;
+    border-top: 1px solid #ebebeb;
+    margin: 0 0 30px 0;
+}
+
+.login-field {
+    margin-bottom: 22px;
+}
+
+/* Field labels — xs */
+.login-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+/* Field inputs — md */
+.login-field input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: #111;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fff;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.login-field input:focus {
+    border-color: #FF6A00;
+    box-shadow: 0 0 0 3px rgba(255,106,0,0.10);
+}
+
+.login-field input::placeholder { color: #ccc; }
+
+/* Login button — md */
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #FF6000, #FF9200);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.3px;
+}
+
+.btn-login:hover {
+    opacity: 0.90;
+    transform: translateY(-1px);
+}
+
+/* Switch link — sm */
+.login-switch {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 12px;
+    color: #666;
+}
+
+.login-switch a {
+    color: #111;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.login-switch a:hover { text-decoration: underline; }
+
+.login-toast {
+    position: fixed;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px);
+    background: #c62828;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.30);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 2000;
+    white-space: nowrap;
+}
+
+.login-toast.login-toast-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+
+/* =====================================================
+   APP PAGES (library.html / admin.html)
+   ===================================================== */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #3B1A0A;
+    color: #1B1B1B;
+    margin: 0;
+    padding: 28px 24px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto 24px auto;
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 26px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.20);
+}
+
+.topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-logo { width: 32px; height: 32px; }
+
+/* Topbar brand name — xl */
+.topbar-brand h1 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1B1B1B;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+/* Topbar portal label — xs */
+.topbar-brand span {
+    font-size: 11px;
+    color: #aaa;
+    display: block;
+    margin-top: 1px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Topbar user info — sm */
+.topbar-user {
+    font-size: 12px;
+    color: #777;
+    margin: 0;
+}
+
+.topbar-user strong {
+    color: #1B1B1B;
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.box {
+    background: #fff;
+    padding: 26px 30px;
+    margin: 0 auto 20px auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+    max-width: 1100px;
+    animation: fadeIn 0.45s ease forwards;
+}
+
+/* Section headings — lg */
+.box h2 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1B1B1B;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-left: 3px solid #FF6A00;
+    padding-left: 10px;
+}
+
+/* Inputs — md */
+input {
+    font-family: 'Inter', sans-serif;
+    padding: 11px 14px;
+    margin: 5px 5px 5px 0;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #111;
+    background: #fafafa;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+    outline: none;
+}
+
+input:focus {
+    border-color: #FF6A00;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255,106,0,0.09);
+}
+
+input::placeholder { color: #c0c0c0; }
+
+#searchInput { width: 100%; margin: 0 0 6px 0; }
+
+.box input:not(#searchInput):not([style*="width"]) { width: calc(33.33% - 8px); }
+
+/* Buttons — md */
+button {
+    padding: 10px 20px;
+    margin: 4px;
+    background: linear-gradient(90deg, #FF6000, #FF9200);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+button:hover { opacity: 0.85; transform: translateY(-1px); }
+
+#logoutBtn {
+    background: transparent;
+    color: #FF6000;
+    border: 1.5px solid #FF6000;
+    padding: 8px 16px;
+    font-size: 13px;
+    margin: 0;
+}
+
+#logoutBtn:hover { background: #FF6000; color: #fff; opacity: 1; transform: none; }
+
+/* Table action buttons — xs */
+td button { padding: 5px 11px; font-size: 11px; margin: 2px; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+
+#bookTable th:nth-child(8),
+#bookTable th:nth-child(9),
+#bookTable th:nth-child(10),
+#bookTable td:nth-child(8),
+#bookTable td:nth-child(9),
+#bookTable td:nth-child(10) { text-align: center; }
+
+/* Library table: Status col 7, Stock col 8 */
+#bookTable.library-table th:nth-child(7),
+#bookTable.library-table td:nth-child(7),
+#bookTable.library-table th:nth-child(8),
+#bookTable.library-table td:nth-child(8) { text-align: center; }
+
+/* Title and Author wrap */
+#bookTable td:nth-child(2),
+#bookTable td:nth-child(3) { white-space: normal; overflow: visible; text-overflow: unset; }
+
+/* Status badge cells — don't clip */
+#bookTable td:nth-child(9),
+#bookTable.library-table td:nth-child(7) { white-space: normal; overflow: visible; text-overflow: unset; }
+th {
+    background: #1B1B1B;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 10px 10px;
+    text-align: left;
+    border: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th:first-child { border-radius: 8px 0 0 0; }
+th:last-child  { border-radius: 0 8px 0 0; }
+
+/* Table rows — base */
+td {
+    padding: 10px 10px;
+    text-align: left;
+    font-size: 12px;
+    border-bottom: 1px solid #f2f2f2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: #fafafa; }
+tr:hover td { background: #fff4ed; transition: background 0.15s; }
+tr.selected td { background: #1B1B1B !important; color: #fff; }
+
+.badge { padding: 3px 8px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-block; text-align: center; line-height: 1.4; }
+.available   { background: #e8f5e9; color: #2e7d32; }
+.unavailable { background: #fff3e0; color: #e65100; }
+.stock-high  { background: #e8f5e9; color: #2e7d32; }
+.stock-mid   { background: #fff3e0; color: #e65100; }
+.stock-low   { background: #fdecea; color: #c62828; }
+
+/* =====================================================
+   PAGINATION
+   ===================================================== */
+
+.pagination {
+    display: flex;
+    gap: 4px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.pagination button {
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 0;
+    background: #f5f5f5;
+    color: #333;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 6px;
+    min-width: 34px;
+}
+
+.pagination button:hover { background: #fff4ed; color: #FF6000; border-color: #FF6000; opacity: 1; transform: none; }
+.pagination button.page-active { background: linear-gradient(90deg, #FF6000, #FF9200); color: #fff; border-color: transparent; }
+.pagination button:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+/* =====================================================
+   SORT TAGS
+   ===================================================== */
+
+.sort-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.sort-tag {
+    background: #fff4ed;
+    color: #FF6000;
+    border: 1.5px solid #ffd0a8;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sort-tag-remove {
+    cursor: pointer;
+    font-size: 10px;
+    color: #FF6000;
+    opacity: 0.7;
+}
+
+.sort-tag-remove:hover { opacity: 1; }
+
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { background: #333; }
+th.sort-active { background: #FF6000; }
+
+/* =====================================================
+   SELECT INPUT
+   ===================================================== */
+
+.input-select {
+    font-family: 'Inter', sans-serif;
+    padding: 11px 14px;
+    margin: 5px 5px 5px 0;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #111;
+    background: #fafafa;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    outline: none;
+    width: calc(33.33% - 8px);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+}
+
+.input-select:focus {
+    border-color: #FF6A00;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255,106,0,0.09);
+}
+
+/* =====================================================
+   DANGER BUTTON
+   ===================================================== */
+
+button.btn-danger {
+    background: linear-gradient(90deg, #c62828, #e53935);
+}
+
+/* =====================================================
+   BORROWED-BY LABEL
+   ===================================================== */
+
+.borrowed-by-label {
+    font-size: 11px;
+    color: #888;
+    display: block;
+    margin-top: 4px;
+}
+
+.borrowed-by-link {
+    color: #FF6000;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+.borrowed-by-link:hover { text-decoration: underline; }
+
+/* =====================================================
+   MODALS
+   ===================================================== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+#confirmModal, #infoModal {
+    z-index: 1100;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 30px;
+    width: 100%;
+    max-width: 760px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    animation: fadeIn 0.25s ease forwards;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.modal-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1B1B1B;
+    margin: 0;
+}
+
+.modal-close {
+    background: transparent;
+    color: #aaa;
+    border: none;
+    font-size: 16px;
+    padding: 4px 8px;
+    margin: 0;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-close:hover { color: #333; opacity: 1; transform: none; }
+
+.modal-section {
+    margin-top: 20px;
+}
+
+.modal-section h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1B1B1B;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-left: 3px solid #FF6A00;
+    padding-left: 10px;
+    margin: 0 0 10px 0;
+}
+
+/* =====================================================
+   USER SEARCH RESULTS
+   ===================================================== */
+
+#userSearchResults table { margin-top: 0; table-layout: fixed; width: 100%; }
+
+#userSearchResults th:nth-child(1) { width: 22%; }
+#userSearchResults th:nth-child(2) { width: 12%; }
+#userSearchResults th:nth-child(3) { width: 14%; }
+#userSearchResults th:nth-child(4) { width: 30%; }
+#userSearchResults th:nth-child(5) { width: 12%; }
+#userSearchResults th:nth-child(6) { width: 10%; }
+
+#userSearchResults td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0;
+}
+
+/* =====================================================
+   TOAST NOTIFICATION
+   ===================================================== */
+
+.toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1B1B1B;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 2000;
+    white-space: nowrap;
+}
+
+.toast.toast-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* =====================================================
+   ICON BUTTONS
+   ===================================================== */
+
+.icon-btn {
+    padding: 5px 9px;
+    font-size: 14px;
+    margin: 2px;
+    line-height: 1;
+    background: #f5f5f5;
+    color: #444;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 7px;
+}
+
+.icon-btn:hover { background: #fff4ed; color: #FF6000; border-color: #FF6000; opacity: 1; transform: none; }
+
+.btn-danger-icon {
+    background: #fff5f5;
+    color: #c62828;
+    border-color: #f5c6c6;
+}
+
+.btn-danger-icon:hover { background: #fdecea; color: #b71c1c; border-color: #e57373; opacity: 1; transform: none; }
+
+.actions-cell { white-space: nowrap; vertical-align: middle; }
+
+/* =====================================================
+   BUTTON VARIANTS
+   ===================================================== */
+
+.btn-outline {
+    background: transparent;
+    color: #FF6000;
+    border: 1.5px solid #FF6000;
+}
+
+.btn-outline:hover { background: #FF6000; color: #fff; opacity: 1; transform: none; }
+
+.btn-ghost {
+    background: transparent;
+    color: #999;
+    border: 1.5px solid #ddd;
+}
+
+.btn-ghost:hover { background: #f5f5f5; color: #555; opacity: 1; transform: none; }
+
+.btn-ban {
+    background: linear-gradient(90deg, #c62828, #e53935);
+    color: #fff;
+}
+
+#auditBtn {
+    background: transparent;
+    color: #555;
+    border: 1.5px solid #ddd;
+    padding: 8px 14px;
+    font-size: 12px;
+    margin: 0;
+}
+
+#auditBtn:hover { background: #f5f5f5; color: #333; opacity: 1; transform: none; }
+
+/* =====================================================
+   BULK SELECT
+   ===================================================== */
+
+.bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    background: #fff4ed;
+    border: 1.5px solid #ffd0a8;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.bulk-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #FF6000;
+    margin-right: 4px;
+}
+
+.bulk-check-cell {
+    width: 36px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.bulk-check-cell input[type="checkbox"],
+#bulkCheckAllTh input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    accent-color: #FF6000;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+
+.bulk-bar button {
+    padding: 8px 16px;
+    font-size: 13px;
+    margin: 0;
+}

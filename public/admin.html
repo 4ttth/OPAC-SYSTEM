@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin OPAC — Sulong Dunong</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">
+        <img src="logo.png" alt="Logo" class="topbar-logo">
+        <div>
+            <h1>SULONG DUNONG</h1>
+            <span>Admin Library Portal</span>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <p class="topbar-user" id="userDisplay"></p>
+        <button onclick="downloadAuditLog()" id="auditBtn">&#8681; Audit Log</button>
+        <button id="logoutBtn">Log Out</button>
+    </div>
+</div>
+
+<!-- User Dashboard -->
+<div class="box">
+    <h2>User Dashboard</h2>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+        <input id="userSearchInput" placeholder="Search by name, email or student/employee number…" style="flex:1; min-width:220px; margin:0;">
+        <button onclick="searchUsers()">Search</button>
+        <button onclick="openAddUserModal()" class="btn-outline">+ Add User</button>
+    </div>
+    <div id="userSearchResults"></div>
+</div>
+
+<!-- Books Table -->
+<div class="box">
+    <h2>Available Books</h2>
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <input id="searchInput" placeholder="Search by title, author, category, dewey decimal…" style="flex:1; margin:0;">
+        <button onclick="toggleBulkMode()" id="bulkToggleBtn" class="btn-outline">Select Bulk</button>
+    </div>
+    <!-- Bulk action bar (hidden until bulk mode) -->
+    <div id="bulkBar" class="bulk-bar" style="display:none;">
+        <span id="bulkCount" class="bulk-count">0 selected</span>
+        <button onclick="openBulkEditModal()" class="btn-outline" id="bulkEditBtn" disabled>Bulk Edit</button>
+        <button onclick="bulkDelete()" class="btn-danger" id="bulkDeleteBtn" disabled>&#128465; Delete Selected</button>
+        <button onclick="toggleBulkMode()" class="btn-ghost">Cancel</button>
+    </div>
+    <div id="paginationTop" class="pagination" style="margin-top:0; margin-bottom:8px;"></div>
+    <table id="bookTable">
+        <colgroup>
+            <col id="colBulk" style="display:none; width:36px;">
+            <col style="width:90px;">          <!-- ID -->
+            <col>                              <!-- Title -->
+            <col style="width:15%;">          <!-- Author -->
+            <col style="width:62px;">         <!-- Year -->
+            <col style="width:13%;">          <!-- Category -->
+            <col style="width:9%;">           <!-- Dewey -->
+            <col style="width:62px;">         <!-- Stock -->
+            <col style="width:100px;">        <!-- Status -->
+            <col style="width:110px;">        <!-- Actions -->
+        </colgroup>
+        <thead>
+            <tr>
+                <th id="bulkCheckAllTh" style="display:none; width:36px;"><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)"></th>
+                <th>ID</th><th>Title</th><th>Author</th><th>Year</th><th>Category</th><th>Dewey</th><th id="thStock">Stock</th><th>Status</th><th id="thActions">Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+</div>
+
+<!-- Add / Edit Book -->
+<div class="box">
+    <h2>Add / Edit Book</h2>
+    <input id="title" placeholder="Title">
+    <input id="author" placeholder="Author">
+    <input id="year" placeholder="Year" type="number">
+    <div style="display:inline-block; width:calc(33.33% - 8px); margin:5px 5px 5px 0; position:relative;">
+        <select id="category" class="input-select" style="width:100%; margin:0;" onchange="onCategoryChange()">
+            <option value="" disabled selected>Category</option>
+            <option>Storybooks</option>
+            <option>Reference Materials</option>
+            <option>Basic Education</option>
+            <option>Basic Technology</option>
+            <option>Cultural Materials</option>
+            <option value="__new__">+ New Category…</option>
+        </select>
+    </div>
+    <input id="newCategoryInput" placeholder="New category name" style="display:none; width:calc(33.33% - 8px);">
+    <input id="dewey_decimal" placeholder="Dewey Decimal">
+    <input id="stock" placeholder="Stock" type="number" min="1" max="9999" value="1">
+    <div style="margin-top:8px;">
+        <button onclick="addBook()">Add Book</button>
+        <button onclick="editBook()">Edit Selected</button>
+        <button onclick="clearBookForm()" class="btn-ghost">Clear</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Bulk Edit Modal -->
+<div id="bulkEditModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:480px;">
+        <div class="modal-header">
+            <h3>Bulk Edit Books</h3>
+            <button onclick="closeBulkEditModal()" class="modal-close">✕</button>
+        </div>
+        <p style="font-size:12px; color:#888; margin:8px 0 16px 0;">Only filled fields will be applied. Leave blank to keep existing values.</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:inline-block; width:100%;">
+                <select id="bulkCategory" class="input-select" style="width:100%; margin:0;" onchange="onBulkCategoryChange()">
+                    <option value="">Category — leave unchanged</option>
+                    <option>Storybooks</option>
+                    <option>Reference Materials</option>
+                    <option>Basic Education</option>
+                    <option>Basic Technology</option>
+                    <option>Cultural Materials</option>
+                    <option value="__new__">+ New Category…</option>
+                </select>
+            </div>
+            <input id="bulkNewCategory" placeholder="New category name" style="display:none; width:100%; margin:0;">
+            <input id="bulkAuthor" placeholder="Author — leave blank to keep" style="width:100%; margin:0;">
+            <input id="bulkDewey" placeholder="Dewey Decimal — leave blank to keep" style="width:100%; margin:0;">
+            <input id="bulkStock" placeholder="Stock — leave blank to keep" type="number" min="1" max="9999" style="width:100%; margin:0;">
+            <p id="bulkEditError" style="color:#e65100; font-size:12px; margin:0; display:none;"></p>
+            <button onclick="submitBulkEdit()" style="width:100%; margin:0;">Apply to Selected</button>
+        </div>
+    </div>
+</div>
+
+<!-- Generic Confirm Modal -->
+<div id="confirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header">
+            <h3 id="confirmTitle">Confirm</h3>
+        </div>
+        <p id="confirmMessage" style="font-size:13px; color:#555; margin:12px 0 20px 0;"></p>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button id="confirmCancel" class="btn-ghost">Cancel</button>
+            <button id="confirmOk">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Generic Info Modal -->
+<div id="infoModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header">
+            <h3 id="infoTitle">Notice</h3>
+            <button onclick="closeInfoModal()" class="modal-close">✕</button>
+        </div>
+        <p id="infoMessage" style="font-size:13px; color:#555; margin:12px 0 0 0;"></p>
+        <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+            <button onclick="closeInfoModal()">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- New Category Confirm Modal -->
+<div id="newCatModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:440px;">
+        <div class="modal-header">
+            <h3>New Category</h3>
+        </div>
+        <p id="newCatMessage" style="font-size:13px; color:#555; margin:12px 0 20px 0;"></p>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button onclick="closeNewCatModal()" class="btn-ghost">Cancel</button>
+            <button id="newCatConfirmBtn">Create & Add Book</button>
+        </div>
+    </div>
+</div>
+
+<!-- Multi-Borrower Modal -->
+<div id="borrowersModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:700px;">
+        <div class="modal-header">
+            <h3 id="borrowersModalTitle">Borrowers</h3>
+            <button onclick="closeBorrowersModal()" class="modal-close">✕</button>
+        </div>
+        <div class="modal-section" style="margin-top:12px;">
+            <table id="borrowersTable">
+                <thead>
+                    <tr>
+                        <th>Number</th><th>Email</th><th>Borrowed</th><th>Due Date</th><th>Overdue Fee</th><th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- User Detail Modal -->
+<div id="userModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalUserName"></h3>
+            <button onclick="closeUserModal()" class="modal-close">✕</button>
+        </div>
+        <p id="modalUserMeta" style="font-size:12px; color:#888; margin:0 0 4px 0;"></p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;" id="modalBanActions"></div>
+
+        <div class="modal-section">
+            <h4>Currently Borrowed</h4>
+            <table id="modalActiveBorrows">
+                <thead><tr><th>Book ID</th><th>Title</th><th>Borrowed</th><th>Due Date</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal-section">
+            <h4>Outstanding Fees</h4>
+            <table id="modalFees">
+                <thead><tr><th>Book ID</th><th>Title</th><th>Days Overdue</th><th>Fee</th><th>Status</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal-section">
+            <h4>Borrow History</h4>
+            <table id="modalHistory">
+                <thead><tr><th>Book ID</th><th>Title</th><th>Borrowed</th><th>Returned</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:460px;">
+        <div class="modal-header">
+            <h3>Add New User</h3>
+            <button onclick="closeAddUserModal()" class="modal-close">✕</button>
+        </div>
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+            <select id="newUserRole" class="input-select" style="width:100%; margin:0;">
+                <option value="" disabled selected>Role</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+            </select>
+            <input id="newUserName" placeholder="Full Name" style="width:100%; margin:0;">
+            <input id="newUserNumber" placeholder="Student / Employee Number" style="width:100%; margin:0;">
+            <input id="newUserEmail" placeholder="Institutional Email" type="email" style="width:100%; margin:0;">
+            <p id="addUserError" style="color:#e65100; font-size:12px; margin:0; display:none;"></p>
+            <button onclick="submitAddUser()" style="width:100%; margin:0;">Add User</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+    const storedUser = sessionStorage.getItem("currentUser");
+    if (!storedUser) { window.location.href = "index.html"; }
+    currentUser = JSON.parse(storedUser);
+    if (currentUser.role !== "admin") { window.location.href = "index.html"; }
+
+    document.getElementById("userDisplay").innerHTML =
+        `Logged in as <strong>${currentUser.name}</strong>`;
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+
+    loadBooks();
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
+    });
+
+    document.getElementById("userSearchInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") searchUsers();
+    });
+</script>
+</body>
+</html>

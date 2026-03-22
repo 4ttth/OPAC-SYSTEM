@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Library Access - Sulong Dunong</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+
+    <div class="login-card">
+        <div class="login-left">
+            <img src="login.jpg" alt="Library" class="login-panel-img">
+        </div>
+
+        <div class="login-right">
+            <img src="logo.png" alt="Logo" class="login-logo">
+            <h2>SULONG DUNONG</h2>
+            <p class="login-subtitle">Welcome - Let's get started</p>
+            <hr class="login-divider">
+
+            <!-- Student Form -->
+            <div id="studentForm">
+                <div class="login-field">
+                    <label>Student Number</label>
+                    <input type="text" id="student_number" placeholder="Enter your student number">
+                </div>
+                <div class="login-field">
+                    <label>Institutional Email</label>
+                    <input type="email" id="login_email_student" placeholder="Enter your institutional email">
+                </div>
+                <button class="btn-login" onclick="login('student')">Sign In</button>
+                <p class="login-switch">
+                    Staff member?
+                    <a onclick="toggleForm('teacher')">Log In as Teacher</a> &nbsp;·&nbsp;
+                    <a onclick="toggleForm('admin')">Log In as Admin</a>
+                </p>
+            </div>
+
+            <!-- Teacher Form -->
+            <div id="teacherForm" style="display:none;">
+                <div class="login-field">
+                    <label>Employee Number</label>
+                    <input type="text" id="employee_number_teacher" placeholder="Enter your employee number">
+                </div>
+                <div class="login-field">
+                    <label>Institutional Email</label>
+                    <input type="email" id="login_email_teacher" placeholder="Enter your institutional email">
+                </div>
+                <button class="btn-login" onclick="login('teacher')">Sign In</button>
+                <p class="login-switch">
+                    Back to <a onclick="toggleForm('student')">Student Login</a> &nbsp;·&nbsp;
+                    <a onclick="toggleForm('admin')">Admin Login</a>
+                </p>
+            </div>
+
+            <!-- Admin Form -->
+            <div id="adminForm" style="display:none;">
+                <div class="login-field">
+                    <label>Employee Number</label>
+                    <input type="text" id="employee_number_admin" placeholder="Enter your employee number">
+                </div>
+                <div class="login-field">
+                    <label>Institutional Email</label>
+                    <input type="email" id="login_email_admin" placeholder="Enter your institutional email">
+                </div>
+                <button class="btn-login" onclick="login('admin')">Sign In</button>
+                <p class="login-switch">
+                    Back to <a onclick="toggleForm('student')">Student Login</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="loginToast" class="login-toast"></div>
+
+    <script>
+        let _loginToastTimer = null;
+
+        function toggleForm(type) {
+            document.getElementById("studentForm").style.display = type === "student" ? "block" : "none";
+            document.getElementById("teacherForm").style.display = type === "teacher" ? "block" : "none";
+            document.getElementById("adminForm").style.display   = type === "admin"   ? "block" : "none";
+        }
+
+        function showLoginError(msg) {
+            const el = document.getElementById("loginToast");
+            el.textContent = msg;
+            el.classList.add("login-toast-show");
+            clearTimeout(_loginToastTimer);
+            _loginToastTimer = setTimeout(() => el.classList.remove("login-toast-show"), 4000);
+        }
+
+        function clearLoginError() {}
+
+        async function login(userType) {
+            clearLoginError();
+            const emailId = userType === "student" ? "login_email_student"
+                          : userType === "teacher" ? "login_email_teacher"
+                          : "login_email_admin";
+            const email = document.getElementById(emailId).value.trim();
+
+            const student_number  = userType === "student" ? document.getElementById("student_number").value.trim() : null;
+            const employee_number = userType === "teacher" ? document.getElementById("employee_number_teacher").value.trim()
+                                  : userType === "admin"   ? document.getElementById("employee_number_admin").value.trim()
+                                  : null;
+
+            if (!email || (userType === "student" && !student_number) || (userType !== "student" && !employee_number)) {
+                showLoginError("All fields are required.");
+                return;
+            }
+
+            const res = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_type: userType, student_number, employee_number, email })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                sessionStorage.setItem("currentUser", JSON.stringify(data));
+                window.location.href = userType === "admin" ? "admin.html" : "library.html";
+            } else {
+                showLoginError(data.error);
+            }
+        }
+    </script>
+</body>
+</html>

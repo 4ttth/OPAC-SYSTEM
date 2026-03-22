@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Library — Sulong Dunong</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">
+        <img src="logo.png" alt="Logo" class="topbar-logo">
+        <div>
+            <h1>SULONG DUNONG</h1>
+            <span id="portalLabel">Library Portal</span>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <p class="topbar-user" id="userDisplay"></p>
+        <button id="logoutBtn">Log Out</button>
+    </div>
+</div>
+
+<div class="box">
+    <h2>Available Books</h2>
+    <input id="searchInput" placeholder="Search by title, author, category, dewey decimal…">
+    <div id="sortTags" class="sort-tags"></div>
+    <div id="paginationTop" class="pagination" style="margin-top:0; margin-bottom:8px;"></div>
+    <table id="bookTable" class="library-table">
+        <colgroup>
+            <col style="width:90px;">          <!-- ID -->
+            <col>                              <!-- Title -->
+            <col style="width:15%;">          <!-- Author -->
+            <col style="width:62px;">         <!-- Year -->
+            <col style="width:13%;">          <!-- Category -->
+            <col style="width:9%;">           <!-- Dewey -->
+            <col style="width:90px;">         <!-- Status -->
+            <col style="width:62px;">         <!-- Stock -->
+        </colgroup>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th data-col="title" class="sortable">Title <span class="sort-icon"></span></th>
+                <th data-col="author" class="sortable">Author <span class="sort-icon"></span></th>
+                <th data-col="year" class="sortable">Year <span class="sort-icon"></span></th>
+                <th data-col="category" class="sortable">Category <span class="sort-icon"></span></th>
+                <th>Dewey</th>
+                <th data-col="status" class="sortable">Status <span class="sort-icon"></span></th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+</div>
+
+<div class="box">
+    <h2>Borrow / Return</h2>
+    <button onclick="borrowBook()">Borrow Selected</button>
+    <button onclick="showReturnPanel()">Return Selected</button>
+
+    <div id="returnPanel" style="display:none; margin-top:16px; padding-top:16px; border-top:1px solid #f2f2f2;">
+        <p style="font-size:13px; color:#555; margin:0 0 10px 0;">
+            Enter the date you are returning <strong id="returningBookCode"></strong>:
+        </p>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <input type="date" id="returnDateInput" style="width:auto;">
+            <button onclick="confirmReturn()">Confirm Return</button>
+            <button onclick="cancelReturn()" class="btn-ghost">Cancel</button>
+        </div>
+        <p id="returnMessage" style="font-size:13px; margin:10px 0 0 0;"></p>
+    </div>
+</div>
+
+<div class="box" id="feesSection" style="display:none;">
+    <h2>Overdue Fees</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Book ID</th><th>Due Date</th><th>Return Date</th><th>Days Overdue</th><th>Fee</th>
+            </tr>
+        </thead>
+        <tbody id="feeList"></tbody>
+    </table>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Info Modal -->
+<div id="infoModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header">
+            <h3 id="infoTitle">Notice</h3>
+            <button onclick="closeInfoModal()" class="modal-close">✕</button>
+        </div>
+        <p id="infoMessage" style="font-size:13px; color:#555; margin:12px 0 0 0;"></p>
+        <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+            <button onclick="closeInfoModal()">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Modal -->
+<div id="confirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header">
+            <h3 id="confirmTitle">Confirm</h3>
+        </div>
+        <p id="confirmMessage" style="font-size:13px; color:#555; margin:12px 0 20px 0;"></p>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button id="confirmCancel" class="btn-ghost">Cancel</button>
+            <button id="confirmOk">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+    const storedUser = sessionStorage.getItem("currentUser");
+    if (!storedUser) { window.location.href = "index.html"; }
+    currentUser = JSON.parse(storedUser);
+    if (currentUser.role !== "student" && currentUser.role !== "teacher") {
+        window.location.href = "index.html";
+    }
+
+    document.getElementById("portalLabel").textContent =
+        currentUser.role === "teacher" ? "Teacher Library Portal" : "Student Library Portal";
+    document.getElementById("userDisplay").innerHTML =
+        `Logged in as <strong>${currentUser.name}</strong>`;
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+
+    loadBooks();
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        renderTable();
+    });
+
+    document.querySelectorAll("#bookTable th.sortable").forEach(th => {
+        th.addEventListener("click", () => toggleSort(th.dataset.col));
+    });
+</script>
+</body>
+</html>
