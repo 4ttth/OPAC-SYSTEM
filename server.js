@@ -2,6 +2,10 @@ import express from "express";
 import cors from "cors";
 import { createClient } from "@libsql/client";
 import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 try {
   readFileSync(".env", "utf8").split("\n").forEach(line => {
@@ -503,5 +507,11 @@ app.get("/audit-log/download", async (req, res) => {
   res.send(lines.join("\n"));
 });
 
-app.use(express.static("public"));
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.use(express.static(join(__dirname, "public")));
+
+// Local dev only — Vercel uses the default export
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+}
+
+export default app;
